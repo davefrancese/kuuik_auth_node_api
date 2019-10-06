@@ -1,6 +1,7 @@
 const knex = require('knex')
 const config = require('../knexfile')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 const pg = knex(config.development)
 const {getAllUsers, signUpUser} = require('../queries/db')
 
@@ -17,12 +18,10 @@ module.exports = app => {
       return await bcrypt.hash(password, salt)
     }
     const hashedUserPassword = await hashPassword(req.body.user.password)
+    // generate token
+    const token = jwt.sign({user: req.body.user.token}, 'secretKey')
     const data = await signUpUser(req.body.user.email, hashedUserPassword, req.body.user.role)
-    res.send(data)
-    // take in req.body.email & req.body.password
-    // hash and salt email & password
-    // save in 'users' table
-    // make token
+    res.send({data, token})
     // send token to frontend to save in local storage
   })
 

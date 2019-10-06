@@ -1,4 +1,5 @@
 const knex = require('knex')
+const jwt = require('jsonwebtoken')
 const config = require('../knexfile')
 const pg = knex(config.development)
 
