@@ -1,7 +1,8 @@
 const knex = require('knex')
 const config = require('../knexfile')
+const bcrypt = require('bcrypt')
 const pg = knex(config.development)
-const {getAllUsers} = require('../queries/db')
+const {getAllUsers, signUpUser} = require('../queries/db')
 
 module.exports = app => {
   app.get('/', async (req, res) => {
@@ -10,6 +11,14 @@ module.exports = app => {
   })
 
   app.post('/auth/signUp', async (req, res, next) => {
+    const hashPassword = async (password) => {
+      const saltRounds = 10;
+      const salt = await bcrypt.genSalt(saltRounds);
+      return await bcrypt.hash(password, salt)
+    }
+    const hashedUserPassword = await hashPassword(req.body.user.password)
+    const data = await signUpUser(req.body.user.email, hashedUserPassword, req.body.user.role)
+    res.send(data)
     // take in req.body.email & req.body.password
     // hash and salt email & password
     // save in 'users' table

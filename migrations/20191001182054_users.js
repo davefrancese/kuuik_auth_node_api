@@ -5,7 +5,8 @@ exports.up = function(knex) {
       (table) => {
         table.increments();
         table.string('email');
-        table.string('password')
+        table.string('password');
+        table.string('role');
       }
     )
   ])
